@@ -21,3 +21,8 @@ TBD
 - Build towards teamwide goal like Jason mentioned
     - http://zlethic.com/diy-3dlidar/
     - https://github.com/Microsoft/AI-Robot-Challenge-Lab
+
+## Timeline
+- Week 1: Introductions, environment setup, start on ROS tutorials if time
+- Week 2: Finish ROS tutorials, introduce main onboarding project (TBD, ideas above)
+- Week 3: Wrap up onboarding project and introduce robot goals and projects
