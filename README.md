@@ -15,20 +15,11 @@ git clone --recursive https://github.com/umigv/sensors-onboarding.git
 
 If you don't already know ROS or haven't used ROS 2 yet, go through the beginner ROS 2 tutorials linked [here](https://docs.ros.org/en/humble/Tutorials.html). You don't have to work through all of these (especially not step-by-step), but a once-over of the materials will help you understand a lot of the concepts that we will be working with in ROS like nodes, topics, publishers and subscribers, services, parameters, and more. The beginner tutorials (**CLI Tools** and **Client Libraries**) should be all you need to get started. You can skip **Beginner: CLI Tools/Configuring environment** since those steps have already been done for you in the Docker container. The ROS tutorial packages for **Beginner: Client Libraries** have also already been cloned for you in this repository under `ros_tutorials`, so you don't need to clone them yourself. When you get to the **Client Libraries** section, you only need to familiarize yourself with either the C++ or Python documentation (not both) based on your personal preference. However, you are welcome and encouraged to learn how to use the other language as well, since you are likely to use packages written in both languages.
 
-## Tips
-
-- Make sure you always run `colcon` commands from the root directory of your workspace, e.g. `~/ws`. Don't run them from subdirectories like `~/ws/src`!
-- To connect a USB device to a Windows device:
-  - Follow [these instructions](https://learn.microsoft.com/en-us/windows/wsl/connect-usb) to connect your device to WSL
-  - Run `dmesg | grep usb` and look for a line similar to `[ 1491.421543] usb 1-1: [device] now attached to [location]` (location may look something like `ttyUSB0`)
-  - Add a new device to `ros2/windows/docker-compose.yml` in your environment repo linking to this location, then restart ROS (e.g. add `- /dev/ttyUSB0:/dev/ttyUSB0` under `devices:`)
-- If you are on Mac, you probably won't be able to easily add a USB device to your Docker container. Instead, try to use one of the team devices like the laptop in order to test your code once you're ready for it
-
 ## Hands-On Project
 
 ### Modifying an IMU Driver
 
-Now that you're familiar with ROS, let's start working with some real sensors! In this project, you will be adding some features to a ROS2 driver for an IMU sensor. You will have the opportunity to test your modified driver on real hardware and hopefully gain  a good understanding of how we can use ROS to interact with sensors! Make sure to check out the [tips](#tips) section below for some best practices and tips on how to use USB devices.
+Now that you're familiar with ROS, let's start working with some real sensors! In this project, you will be adding some features to a ROS2 driver for an IMU sensor. You will have the opportunity to test your modified driver on real hardware and hopefully gain  a good understanding of how we can use ROS to interact with sensors! Make sure to check out the [tips](#tips) section below for some best practices.
 
 #### Overview
 
@@ -64,7 +55,13 @@ For this project, we will work through adding some features to this IMU driver a
 
 ###### Task 1: Gravity
 
-ROS passes values like the acceleration of an object in a specific format called a messsage, with each message having a rigidly defined structure. The structure for an IMU acceleration message can be found [here](https://www.ros.org/reps/rep-0145.html).
+ROS passes values like the acceleration of an object in a specific format called a messsage, with each message having a rigidly defined structure. The structure for an IMU acceleration message can be found [here](https://www.ros.org/reps/rep-0145.html). The important part here can be found under `Data Sources`, where it says that the accelerometers should report a vector corresponding to the acceleration due to gravity in the z axis while the device is at rest. This is not currently accounted for in the driver, but we would like to account for it because certain SLAM algorithms expect the absolute gravity reference for localization. Therefore, your first task is to modify the IMU driver to add the acceleration due to gravity to the IMU output. There are already gravity registers available for you to use in `bno055/registers.py`. Try to figure out how to read the values from these registers and incorporate them into the IMU message output published on `/bno055/imu`.
+
+Note: this driver already does correctly incorporate gravity into `/bno055/imu_raw`. It does this through a direct interface with a sensor register that does this for you, but for the purpose of this exercise you can just ignore that part and add the gravity accleration to `/bno055/imu` directly. We won't actually be using this code, but it's good to get a feel for how we can interface with the IMU ourselves and add new/missing features to pre-existing drivers.
+
+## Tips
+
+- Make sure you always run `colcon` commands from the root directory of your workspace, e.g. `~/ws`. Don't run them from subdirectories like `~/ws/src`!
 
 ## Timeline
 
