@@ -43,7 +43,7 @@ This section will walk you through the structure of the package and provide guid
   - Direct sensor interface code defined in `sensor/SensorService.py`
   - Helper functions for interfacing with sensor using different connection protocols defined in `connectors`
   - Other code defines parameters for the node and error handling logic
-- We will mostly be making changes to ``bno055.py` and `sensor/SensorService.py`, but it is good to get familiar with the rest of the code as well to really understand how the drivers we use interact with the real hardware
+- We will mostly be making changes to `bno055.py` and `sensor/SensorService.py`, but it is good to get familiar with the rest of the code as well to really understand how the drivers we use interact with the real hardware
 
 ##### Understanding Sensor Communication
 
