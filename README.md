@@ -62,6 +62,7 @@ Note: this driver already does correctly incorporate gravity into `/bno055/imu_r
 ## Tips
 
 - Make sure you always run `colcon` commands from the root directory of your workspace, e.g. `~/ws`. Don't run them from subdirectories like `~/ws/src`!
+- To test with RViz, make sure you set the fixed frame to `bno055` in the RViz settings
 
 ## Timeline
 
