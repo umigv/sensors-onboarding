@@ -73,7 +73,22 @@ Note: this driver already does correctly incorporate gravity into `/bno055/imu_r
 
 ##### Task 2: Logging
 
-Coming soon!
+This task is a bit more free-form, so feel free to implement it however you like and play around with the features you add. The goal of this task is to get you more familiar with ROS topics, messages, subscribers, and logging. We would like to add some additional logging to the IMU driver when certain events occur. The exact events you log will be up to you, but here are some ideas to get you started (these are ordered in terms of expected difficulty but this may not be accurate):
+
+- Periodically log the current velocity (not acceleration!) and orientation of the IMU
+- Log a message whenever the IMU flips over or returns to the upright position
+- Log a warning whenever the IMU experiences a sudden rapid acceleration (e.g. a collision)
+
+We will do this by adding a new ROS subscriber to the driver that will subscribe to the `/bno055/imu` or `/bno055/imu_raw` topic (your choice, if you haven't implemented task 1, `imu_raw` includes gravity in the acceleration message which may be useful to you if you aren't familiar with [quaternions](https://wiki.ogre3d.org/Quaternion+and+Rotation+Primer), which is the format for orientation in ROS, although it is good to learn about quaternions for future work in sensors and robotics). This subscriber will gather the data it needs to log what you choose and then use the ROS logging API to print messages when needed.
+
+##### Task 2 Hints
+
+- You will need to set up a new subscriber and intialize it in the `main` function of `bno055.py`. Check out [this tutorial](https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Py-Publisher-And-Subscriber.html#write-the-subscriber-node) on how to do so if you are need a refresher.
+  - I recommend creating your subscriber in a separate file and importing it into `bno055.py` in order to keep your concerns separate. Analyze how `bno055.py` imports modules like `SensorService` for an idea of how to do this.
+- Information on ROS topics gets sent as individual messages with instantaneous data describing the robot's state at a certain fixed interval (rate). Figure out what interval the `bno055` driver publishes at and use that in your code to do the calcuations you need.
+  - Stretch goal: don't hardcode the publishing rate into your code—it may change depending on the configuration of the driver! Figure out how you can read that configuration value at initialization.
+- Think about what data you need to store about past IMU messages in order to log the events you want. What data structures will you need to store them? How often do you need to do this?
+- For help with logging in ROS, check out [this article](http://docs.ros.org/en/humble/Tutorials/Demos/Logging-and-logger-configuration.html).
 
 ## Tips
 
