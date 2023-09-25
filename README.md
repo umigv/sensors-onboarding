@@ -104,7 +104,11 @@ We will do this by adding a new ROS subscriber to the driver that will subscribe
     - `git remote add upstream https://github.com/umigv/sensors-onboarding.git`
   - Set your `main` branch to track your fork instead of the original repository with `git branch main -u origin/main`
   - Push your code with `git push`
-  - On the team laptop, pull your code to an appropriate folder with `git clone [link to your fork here] sensors-onboarding-[your uniqname]` (your uniqname is there to keep different people's code separate)
+  - On the team laptop, pull your code to the workspace inside the folder with your name in `~/sensors` (e.g. `cd ~/sensors/[your name here]/ws/src`) with `git clone [link to your fork here]`
+  - You can use the ROS helper functions I've written as follows:
+    - `rosup [your name here]` - installs the dependencies needed for your ROS workspace (will need a password that one of the leads can tell you)
+    - `rosbuild [your name here]` - builds your ROS workspace
+    - `rossrc [your name here]` - sources `install/setup.bash` in your ROS workspace
   - For more information on forks, check [this page](https://docs.github.com/en/get-started/quickstart/fork-a-repo)
 
 ## Timeline
