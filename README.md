@@ -86,7 +86,7 @@ We will do this by adding a new ROS subscriber to the driver that will subscribe
 - You will need to set up a new subscriber and intialize it in the `main` function of `bno055.py`. Check out [this tutorial](https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Py-Publisher-And-Subscriber.html#write-the-subscriber-node) on how to do so if you are need a refresher.
   - I recommend creating your subscriber in a separate file and importing it into `bno055.py` in order to keep your concerns separate. Analyze how `bno055.py` imports modules like `SensorService` for an idea of how to do this.
     - Note: adding another subscriber to the driver that subscribes to the driver's output is definitely not best practice, I just chose this because it's simpler and easier to implement for newcomers to ROS. The real best way to do this would be to create and launch a completely separate node that subscribes to `/bno055/imu` or `/bno055/imu_raw` and monitors it, and you are welcome and even encouraged to do the exercise this way in order to get more practice with ROS nodes.
-- Information on ROS topics gets sent as individual messages with instantaneous data describing the robot's state at a certain interval (rate). This driver actually does not have a fixed rate of publishing, which makes it more difficult to do  calculations based on rate at which messages are received. Think about how you can get around this limitation (hint: ROS allows you to get the current time with `my_node.get_clock().now()`, where `my_node` is the ROS node object you create)
+- Information on ROS topics gets sent as individual messages with instantaneous data describing the robot's state at a certain interval (rate). This driver actually does not have a fixed rate of publishing, which makes it more difficult to do  calculations based on the rate at which messages are received. Think about how you can get around this limitation (hint: ROS allows you to get the current time with `my_node.get_clock().now()`, where `my_node` is the ROS node object you create)
 - Think about what data you need to store about past IMU messages in order to log the events you want. What data structures will you need to store them? How often do you need to do this?
 - For help with logging in ROS, check out [this article](http://docs.ros.org/en/humble/Tutorials/Demos/Logging-and-logger-configuration.html).
 
@@ -94,21 +94,29 @@ We will do this by adding a new ROS subscriber to the driver that will subscribe
 
 - Make sure you always run `colcon` commands from the root directory of your workspace, e.g. `~/ws`. Don't run them from subdirectories like `~/ws/src`!
 - To test with RViz, make sure you set the fixed frame to `bno055` in the RViz settings
-- If you are on Mac, you probably won't be able to test your code by plugging in an IMU directly since Mac doesn't allow USB passthrough to Docker containers eassily. When you need to test your code, push your code to a fork and test it on a team computer running Linux as follows:
-  - On Github, fork the `sensors-onboarding` repo by clicking the Fork button in the upper right corner
-  - Once you've forked the repository, click the green Code dropdown and copy the link to your forked repository
-  - Open your `sensors-onboarding` repo on your local machine and enter the following commands:
-    - `git remote remove origin`
-    - `git remote add origin [link to your fork here]`
-    - `git remote add upstream https://github.com/umigv/sensors-onboarding.git`
-  - Set your `main` branch to track your fork instead of the original repository with `git branch main -u origin/main`
-  - Push your code with `git push`
-  - On the team laptop, pull your code to the workspace inside the folder with your name in `~/sensors` (e.g. `cd ~/sensors/[your name here]/ws/src`) with `git clone [link to your fork here]`
-  - You can use the ROS helper functions I've written as follows:
-    - `rosup [your name here]` - installs the dependencies needed for your ROS workspace (will need a password that one of the leads can tell you)
-    - `rosbuild [your name here]` - builds your ROS workspace
-    - `rossrc [your name here]` - sources `install/setup.bash` in your ROS workspace
-  - For more information on forks, check [this page](https://docs.github.com/en/get-started/quickstart/fork-a-repo)
+- If you are on Mac, you probably won't be able to test your code by plugging in an IMU directly since Mac doesn't allow USB passthrough to Docker containers eassily. When you need to test your code, push your code to a fork and test it on a team computer running Linux as detailed in the following section
+
+## Running on Team Computers
+
+If you are on Mac or just want to test with a more robust native Linux/ROS setup, follow the instructions below to get your code onto a team computer:
+
+- Run everything below **outside of your ROS container** but in your Unix environment (e.g. inside WSL on Windows, inside your reguolar terminal on Mac)
+- If you don't already have SSH keys set one up by following [these instructions](https://docs.github.com/en/authentication/connecting-to-github-with-ssh)
+- On Github, fork the `sensors-onboarding` repo by clicking the Fork button in the upper right corner
+- Once you've forked the repository, click the green Code dropdown and copy the **SSH link** to your forked repository (should look like `git@github.com:username/sensors-onboarding`)
+- Open your `sensors-onboarding` repo on your local machine and enter the following commands:
+  - `git remote remove origin`
+  - `git remote add origin [link to your fork here]`
+  - `git remote add upstream https://github.com/umigv/sensors-onboarding.git`
+- Fetch the new origin data with `git fetch origin`
+- Set your `main` branch to track your fork instead of the original repository with `git branch main -u origin/main`
+- Push your code with `git push`
+- On the team laptop, pull your code into the workspace inside the folder with your name in `~/sensors` (e.g. `cd ~/sensors/[your name here]/ws/src`) with `git clone [link to your fork here]`
+- You can use the ROS helper functions I've written as follows:
+  - `rosup [your name here]` - installs the dependencies needed for your ROS workspace (will need a password that one of the leads can tell you)
+  - `rosbuild [your name here]` - builds your ROS workspace
+  - `rossrc [your name here]` - sources `install/setup.bash` in your ROS workspace
+- For more information on forks, check [this page](https://docs.github.com/en/get-started/quickstart/fork-a-repo)
 
 ## Timeline
 
