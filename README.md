@@ -1,19 +1,45 @@
-# Sensors Onboarding
+# Sensors Onboarding 2024
 
-Welcome to the sensors subteam! We work on integrating, configuring, and fusing all the different sensors of the robot together so that it can localize itself and understand its surroundings. You can think of sensors as the backbone or glue of the team—we help connect subsystems together and provide the crucial information necessary for them to function. In this onboarding project, you will get your local environment setup so you can work with our software stack, learn ROS (the set of libraries and tools we use to run our robot), and get to work with real sensors on a project that should help give you an idea of what you will be doing on the team.
+Welcome to the sensors subteam! We work on integrating, configuring, and fusing all the different sensors of the robot together so that it can localize itself and understand its surroundings. You can think of sensors as the backbone or glue of the team—we help connect subsystems together and provide the crucial information necessary for them to function. In this onboarding project, you will set up your local environment so you can work with our software stack, learn ROS (the set of libraries and tools we use to run our robot), and work on a project that involves real sensors, giving you a hands-on experience of what we do on the team.
 
-## Setup
+## Environment Setup
+You will be using pre-configured Ubuntu 22.04 virtual machines for your ROS environment. First, you need to download the virtualization software required to run these virtual machines, VMware Workstation Pro for Windows and VMware Fusion Pro for Mac. 
 
-Please follow the [environment setup instructions](https://github.com/umigv/environment) to get your local environment up and running, then clone this repository into the `ws/src` folder as follows:
+### Windows Instructions
+- Download and run the installer found in the folder at the following link: [Workstation Pro Installer](https://drive.google.com/drive/u/1/folders/1B4brWb8zgHHhMUmMF9D1ZJPqDI5njiof)
+    - Note: if you get the error "Can't scan for viruses", thats normal in this case, just press "Download anyway"
+- When prompted, select “Install Windows Hypervisor Platform (WHP) automatically”
+- Leave all other settings as the default
+- Download and unzip the virtual machine found in the folder at the following link: [Virtual Machine](https://drive.google.com/drive/u/1/folders/1MHMFtIlwFGJZG5i-9k_x_0I_77PrtI__)
+  - Note: the virtual machine itself will be a folder named "ARV ROS2 Humble AMD64 VM", this will take a while to download, so please be patient
+- Launch the VMware Workstation Pro application
+- Select "Use VMware Workstation 17 for Personal Use"
+- Select "Open a Virtual Machine"
+- In the file explorer, navigate inside the unzipped virtual machine folder you downloaded and select the "VMware virtual machine configuration" file found inside
+- This will open the pre-configured virtual machine, where a ROS workspace is already installed and ready to go
+- The password to login is "arv123"
 
-```sh
-cd [your environment folder]/ws/src
-git clone --recursive https://github.com/umigv/sensors-onboarding.git
-```
+### Mac Instructions
+- Download and run the installer found in the folder at the following link: [Fusion Pro Installer](https://drive.google.com/drive/u/1/folders/17qI6loxY2wwvchc0UcinaLhVEvrYvMe1)
+- Download and unzip the virtual machine found in the folder at the following link: [Virtual Machine](https://drive.google.com/drive/u/1/folders/1AtrTcFdAR8XJhJ1agBp9nuoueDqO_DnV)
+- Launch the VMware Fusion Pro application
+- When prompted for a license key, select "I want to license VMware Fusion 13 Pro for Personal Use"
+- In the upper menu, select File->Open and Run, and select the virtual machine you downloaded
+- This will open the pre-configured virtual machine, where a ROS workspace is already installed and ready to go
+- The password to login is "arv123"
+
+### VMware vs Docker
+
+We strongly encourage using **VMware** for your ROS2 development environment. VMware tends to provide better performance and hardware compatibility, especially when dealing with USB passthrough for sensors. However, Docker is still a viable option if you prefer containerized environments. -- I have been using Docker containers and haven't had issues so far. For those interested in Docker, check out the [Docker setup guide](https://docs.docker.com/get-started/).
+
+---
+
 
 ## Learning ROS
 
-If you don't already know ROS or haven't used ROS 2 yet, go through the beginner ROS 2 tutorials linked [here](https://docs.ros.org/en/humble/Tutorials.html). You don't have to work through all of these (especially not step-by-step), but a once-over of the materials will help you understand a lot of the concepts that we will be working with in ROS like nodes, topics, publishers and subscribers, services, parameters, and more. The beginner tutorials (**CLI Tools** and **Client Libraries**) should be all you need to get started. You can skip **Beginner: CLI Tools/Configuring environment** since those steps have already been done for you in the Docker container. The ROS tutorial packages for **Beginner: Client Libraries** have also already been cloned for you in this repository under `ros_tutorials`, so you don't need to clone them yourself. When you get to the **Client Libraries** section, you only need to familiarize yourself with either the C++ or Python documentation (not both) based on your personal preference. However, you are welcome and encouraged to learn how to use the other language as well, since you are likely to use packages written in both languages.
+If you aren't familiar with ROS2, start by reviewing the beginner ROS2 tutorials linked [here](https://docs.ros.org/en/humble/Tutorials.html). You don't need to go through every single tutorial step-by-step, but focusing on topics like **CLI Tools** and **Client Libraries** will help you grasp essential concepts like nodes, topics, publishers and subscribers, services, and parameters. For this onboarding, you can skip the **CLI Tools/Configuring environment** tutorial since those steps have been pre-configured in your VM or Docker container. You will only need to familiarize yourself with either the Python or C++ client libraries, depending on your preference, but you are encouraged to learn both for future flexibility.
+
+
 
 ## Hands-On Project - Modifying an IMU Driver
 
@@ -71,13 +97,17 @@ Note: this driver already does correctly incorporate gravity into `/bno055/imu_r
 - We can see in `registers.py` that there are registers that just hold the gravity data. How can we access the data from these registers and add them to the linear acceleration values in `imu_msg`?
   - Hint: you don't need to call `self.con.receive()` again—the data we want is already in `buf`.
 
-##### Task 2: Logging
+##### Task 2: Linear Velocity and Filters
 
 This task is a bit more free-form, so feel free to implement it however you like and play around with the features you add. The goal of this task is to get you more familiar with ROS topics, messages, subscribers, and logging. We would like to add some additional logging to the IMU driver when certain events occur. The exact events you log will be up to you, but here are some ideas to get you started (these are ordered in terms of expected difficulty but this may not be accurate):
 
 - Periodically log the current velocity (not acceleration!) and orientation of the IMU
-- Log a message whenever the IMU flips over or returns to the upright position
 - Log a warning whenever the IMU experiences a sudden rapid acceleration (e.g. a collision)
+- Apply simple filters such as a [low-pass filter](https://en.wikipedia.org/wiki/Low-pass_filter) or some other filter to try reducing drift
+Extra Challenge
+- If you're up for a challenge try to compute velocity using various numerical integration algorithms such as [Verlet](https://en.wikipedia.org/wiki/Verlet_integration). Think about what registers you need to compute the velocity via Verlet Integration.
+- If you're up for more challenges, you can try to filter out the noise/IMU drift via a [Kalman Filter](https://en.wikipedia.org/wiki/Verlet_integration)
+  - I can provide tutorials if you are interested in implementing Kalman Filters. Fun Fact: A simplified version of Kalman Filters is Project 1 of ROB 101! 
 
 We will do this by adding a new ROS subscriber to the driver that will subscribe to the `/bno055/imu` or `/bno055/imu_raw` topic (your choice, if you haven't implemented task 1, `imu_raw` includes gravity in the acceleration message which may be useful to you if you aren't familiar with [quaternions](https://wiki.ogre3d.org/Quaternion+and+Rotation+Primer), which is the format for orientation in ROS, although it is good to learn about quaternions for future work in sensors and robotics). This subscriber will gather the data it needs to log what you choose and then use the ROS logging API to print messages when needed.
 
